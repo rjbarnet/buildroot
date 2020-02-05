@@ -1,0 +1,22 @@
+Steps:
+ * Depend on extract step
+ * rsync from build directory
+    * Could extraction steps be done in this new directory instead of
+      having to use the build directory?
+        * issue with using build dir is that it could have already built
+ * create blank git repo with the source there
+ * add all extracted source to the git repo
+    * commit with basic commit message saying it is the initial commit
+ * apply patches
+    * put file path in the patch before apply
+    * how to handle patches which don't conform to git patch style
+
+
+
+* Put path of each patch file into commit message before applying the patch
+   ** Remove after applying the patch
+* How to handle adding new patches?
+   ** Do you put in the directory of the last patch?
+   ** Is there some sort of key placement/etc that should be used?
+
+

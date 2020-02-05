@@ -240,6 +240,19 @@ $(foreach dir,$(call qstrip,$(BR2_GLOBAL_PATCH_DIR)),\
 	$(if $(wildcard $(dir)),,\
 		$(error BR2_GLOBAL_PATCH_DIR contains nonexistent directory $(dir))))
 
+MANAGE_PATCH_DIR = $(BASE_DIR)/patch-dev
+
+$(MANAGE_PATCH_DIR)/%/.stamp_patch_manage: PATCH_BASE_DIRS = $(PKGDIR)
+$(MANAGE_PATCH_DIR)/%/.stamp_patch_manage: PATCH_BASE_DIRS += $(addsuffix /$(RAWNAME),$(call qstrip,$(BR2_GLOBAL_PATCH_DIR)))
+$(MANAGE_PATCH_DIR)/%/.stamp_patch_manage:
+	mkdir -p "$(basename $@)"
+	echo basename=$(basename $@)
+	echo PATCH_BASE_DIRS=$(PATCH_BASE_DIRS)
+	echo $(PKG)
+	echo $($(PKG)_DIR)
+	touch $@
+
+
 # Configure
 $(BUILD_DIR)/%/.stamp_configured:
 	@$(call step_start,configure)
@@ -709,10 +722,12 @@ $(2)_TARGET_BUILD =		$$($(2)_DIR)/.stamp_built
 $(2)_TARGET_CONFIGURE =		$$($(2)_DIR)/.stamp_configured
 $(2)_TARGET_RSYNC =		$$($(2)_DIR)/.stamp_rsynced
 $(2)_TARGET_PATCH =		$$($(2)_DIR)/.stamp_patched
+$(2)_TARGET_PATCH_MANAGE =	$(MANAGE_PATCH_DIR)/$$($(2)_BASENAME)/.stamp_patch_manage
 $(2)_TARGET_EXTRACT =		$$($(2)_DIR)/.stamp_extracted
 $(2)_TARGET_SOURCE =		$$($(2)_DIR)/.stamp_downloaded
 $(2)_TARGET_ACTUAL_SOURCE =	$$($(2)_DIR)/.stamp_actual_downloaded
 $(2)_TARGET_DIRCLEAN =		$$($(2)_DIR)/.stamp_dircleaned
+
 
 # default extract command
 $(2)_EXTRACT_CMDS ?= \
@@ -756,6 +771,8 @@ endif
 
 # human-friendly targets and target sequencing
 $(1):			$(1)-install
+
+
 
 ifeq ($$($(2)_TYPE),host)
 $(1)-install:	        $(1)-install-host
@@ -817,6 +834,9 @@ $(1)-patch:		$$($(2)_TARGET_PATCH)
 $$($(2)_TARGET_PATCH):	$$($(2)_TARGET_EXTRACT)
 # Order-only dependency
 $$($(2)_TARGET_PATCH):  | $$(patsubst %,%-patch,$$($(2)_FINAL_PATCH_DEPENDENCIES))
+
+$(1)-manage-patch: $$($(2)_TARGET_PATCH_MANAGE)
+$$($(2)_TARGET_PATCH_MANAGE): $$($(2)_TARGET_SOURCE)
 
 $(1)-extract:			$$($(2)_TARGET_EXTRACT)
 $$($(2)_TARGET_EXTRACT):	$$($(2)_TARGET_SOURCE)

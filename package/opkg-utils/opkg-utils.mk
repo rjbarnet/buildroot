@@ -13,7 +13,7 @@ OPKG_UTILS_LICENSE_FILES = COPYING
 HOST_OPKG_UTILS_DEPENDENCIES += $(BR2_PYTHON3_HOST_DEPENDENCY)
 
 define HOST_OPKG_UTILS_INSTALL_CMDS
-	$(MAKE) -C $(@D) PREFIX=$(HOST_DIR) install
+	$(MAKE) -C $(@D) PREFIX=$(HOST_DIR) install-utils
 endef
 
 $(eval $(host-generic-package))

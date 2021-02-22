@@ -15,8 +15,14 @@ E2FSPROGS_INSTALL_STAGING = YES
 # Use libblkid and libuuid from util-linux for host and target packages.
 # This prevents overriding them with e2fsprogs' ones, which may cause
 # problems for other packages.
-E2FSPROGS_DEPENDENCIES = host-pkgconf util-linux
-HOST_E2FSPROGS_DEPENDENCIES = host-pkgconf host-util-linux
+E2FSPROGS_DEPENDENCIES = \
+	host-pkgconf \
+	$(BR2_COREUTILS_HOST_DEPENDENCY) \
+	util-linux
+HOST_E2FSPROGS_DEPENDENCIES = \
+	host-pkgconf \
+	$(BR2_COREUTILS_HOST_DEPENDENCY) \
+	host-util-linux
 
 E2FSPROGS_SELINUX_MODULES = fstools
 
